@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2NB Translate</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><b>2NB</b></h1>
+            <p>Translate</p>
+        </div>
+
+        <div class="select-container">
+            <select id="detected_lang">
+                <option value="" disabled selected>Select Language</option>
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="Spanish">Spanish</option>
+                <option value="German">German</option>
+                <option value="Vietnamese">Vietnamese</option>
+            </select>
+
+            <select id="desired_lang">
+                <option value="" disabled selected>Select Language</option>
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="Spanish">Spanish</option>
+                <option value="German">German</option>
+                <option value="Vietnamese">Vietnamese</option>
+            </select>
+        </div>
+
+        <div class="text-container">
+            <textarea id="input_text" placeholder=""></textarea>
+            <textarea id="output_text" placeholder="" readonly></textarea>
+        </div>
+
+        <button onclick="translateText()">Translate</button>
+    </div>
+
+    <script>
+        function translateText() {
+            let inputText = document.getElementById("input_text").value;
+            let detectedLang = document.getElementById("detected_lang").value;
+            let desiredLang = document.getElementById("desired_lang").value;
+
+            fetch('/translate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `input_text=${inputText}&detected_lang=${detectedLang}&desired_lang=${desiredLang}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("output_text").value = data.translated_text;
+            });
+        }
+    </script>
+</body>
+</html>
