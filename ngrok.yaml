@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: ngrok
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ngrok
+  template:
+    metadata:
+      labels:
+        app: ngrok
+    spec:
+      containers:
+      - name: ngrok
+        image: ngrok/ngrok  # Pull từ Docker Hub
+        args: ["http", "flask-service:80"]
+        env:
+        - name: NGROK_AUTHTOK
+          value: "2uzmJG9S0Bt1amPYOwtYhmYcOPh_3oLWcHiRzQRWXisf6PDVh"  # Thay bằng token của bạn

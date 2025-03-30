@@ -1,23 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-translate
+  name: flask-ngrok
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flask-translate
+      app: flask-ngrok
   template:
     metadata:
       labels:
-        app: flask-translate
+        app: flask-ngrok
     spec:
       containers:
-      - name: flask-translate
-        image: flask-translate:latest  # Image đã build
-        imagePullPolicy: Never
+      - name: flask-app
+        image: trinhngocnhat079/flask-translate:latest  # Image Flask từ Docker Hub
         ports:
         - containerPort: 5000
+
+      - name: ngrok
+        image: ngrok/ngrok:latest  # Image Ngrok từ Docker
+        args: ["http", "flask-service:80"]  # Tunnel tới Flask
+        env:
+        - name: NGROK_AUTHTOKEN
+          value: "2uzmJG9S0Bt1amPYOwtYhmYcOPh_3oLWcHiRzQRWXisf6PDVh"  # Thay bằng token của bạn
+        ports:
+        - containerPort: 4040  # Expose dashboard Ngrok
 
 ---
 apiVersion: v1
@@ -26,9 +34,23 @@ metadata:
   name: flask-service
 spec:
   selector:
-    app: flask-translate
+    app: flask-ngrok
   ports:
     - protocol: TCP
-      port: 80
+      port: 80  # Cổng mà Ngrok sẽ gọi
       targetPort: 5000
-  type: NodePort  # Expose ra ngoài Minikube
+  type: NodePort  # Expose Flask service ra bên ngoài
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ngrok-service
+spec:
+  selector:
+    app: flask-ngrok
+  ports:
+    - protocol: TCP
+      port: 4040  # Cổng dashboard Ngrok
+      targetPort: 4040
+  type: NodePort  # Expose để lấy link Ngrok
