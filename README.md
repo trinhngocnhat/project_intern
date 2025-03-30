@@ -13,6 +13,9 @@
 - Docker  
 - VirtualBox  
 - Kali Linux  
-- Ngrok  
+- Ngrok
+- TfidfVectorizer
 ---
-
+## Thuật toán sử dụng:
+- Random Forest
+- LSTM 
